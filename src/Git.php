@@ -149,7 +149,8 @@ class Git
         chdir($cwd);
 
         if ($returnValue !== 0) {
-            throw new RuntimeException($output);
+            $message = is_array($output) ? implode(',', $output) : $output;
+            throw new RuntimeException($message, $returnValue);
         }
 
         return $output;
