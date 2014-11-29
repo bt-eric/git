@@ -106,6 +106,13 @@ class Git
     }
 
     /**
+     * @param bool $is_merge
+     *   Optional argument to include commits with more than one parent.
+     * @param bool $is_reverse
+     *   Optional argument to output commits in reverse order.
+     * @param int $n
+     *   Optional argument to limit the number of commits to output.
+     *
      * @return array
      */
     public function getRevisions($is_merge = FALSE, $is_reverse = TRUE, $n = 0)
@@ -125,16 +132,16 @@ class Git
 
             if (count($tmp) == 2 && $tmp[0] == 'commit') {
                 $sha1 = $tmp[1];
-            } elseif ((count($tmp) == 4 || count($tmp == 3)) && $tmp[0] == 'Author:') {
+            } elseif ((count($tmp) == 4 || count($tmp) == 3) && $tmp[0] == 'Author:') {
                 $author = join(' ', array_slice($tmp, 1));
             } elseif (count($tmp) == 9 && $tmp[0] == 'Date:') {
                 $revisions[] = array(
-                  'author'  => $author,
+                  'author'  => isset($author) ? $author : '',
                   'date'    => DateTime::createFromFormat(
                       'D M j H:i:s Y O',
                       join(' ', array_slice($tmp, 3))
                   ),
-                  'sha1'    => $sha1,
+                  'sha1'    => isset($sha1) ? $sha1 : '',
                   'message' => isset($output[$i+2]) ? trim($output[$i+2]) : ''
                 );
             }
