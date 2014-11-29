@@ -75,6 +75,13 @@ class Git
         );
     }
 
+    public function pull($branch, $remote = 'origin') {
+        $output =  $this->execute(
+            "git pull $remote $branch"
+        );
+        return join("\n", $output);
+    }
+
     /**
      * @return string
      */
