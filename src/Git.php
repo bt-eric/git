@@ -105,10 +105,13 @@ class Git
     /**
      * @return array
      */
-    public function getRevisions()
+    public function getRevisions($is_merge = FALSE, $is_reverse = TRUE, $n = 0)
     {
+        $merge = $is_merge ? '' : '--no-merges ';
+        $order = $is_reverse ? '--reverse ' : '';
+        $limit = $n ? "-$n " : '';
         $output = $this->execute(
-            'git log --no-merges --date-order --reverse --format=medium'
+            "git log $merge --date-order $order $limit --format=medium"
         );
 
         $numLines  = count($output);
@@ -119,7 +122,7 @@ class Git
 
             if (count($tmp) == 2 && $tmp[0] == 'commit') {
                 $sha1 = $tmp[1];
-            } elseif (count($tmp) == 4 && $tmp[0] == 'Author:') {
+            } elseif ((count($tmp) == 4 || count($tmp == 3)) && $tmp[0] == 'Author:') {
                 $author = join(' ', array_slice($tmp, 1));
             } elseif (count($tmp) == 9 && $tmp[0] == 'Date:') {
                 $revisions[] = array(
